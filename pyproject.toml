@@ -2,7 +2,7 @@
 name = "fc-http-rest-client"
 version = "0.1.0"
 description = "Client to connect by http with other clients"
-authors = ["Frank Chacon"]
+authors = ["chaconfrank <frankchaconcrescini@outlook.com>"]
 readme = "README.md"
 packages = [{include = "http_rest_client"}]
 
