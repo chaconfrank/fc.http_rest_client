@@ -4,6 +4,9 @@ import requests
 from requests import Response
 from requests.exceptions import Timeout
 
+from http_rest_client.auth0_command_handler import Command
+from http_rest_client.command_dispatch import Dispatch
+
 
 class HttpMethods(Enum):
     GET = 'GET',
@@ -29,8 +32,10 @@ class HttpClient:
         return self.tries
 
     def send_request(
-            self, http_method: HttpMethods, endpoint: str, data=None) -> Response | TimeoutError | ValueError:
+            self, http_method: HttpMethods, endpoint: str, data=None, command_auth=None
+    ) -> Response | TimeoutError | ValueError:
 
+        self._set_header_authenticate(command_auth)
         url = self.base_url + endpoint
 
         self.tries = 0
@@ -52,3 +57,11 @@ class HttpClient:
                 self.tries += 1
 
         raise Timeout("Maximum number of retries exceeded.")
+
+    def _set_headers(self, key: str, value: str):
+        self.headers.setdefault(key, value)
+
+    def _set_header_authenticate(self, command_auth: Command):
+        if command_auth:
+            token = Dispatch().execute(command_auth)
+            self._set_headers('Authorization', token)
